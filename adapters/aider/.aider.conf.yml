@@ -1,0 +1,14 @@
+# STEFAN Code Review — Aider
+#
+# Setup:
+#   Option A: Copy this file to your project root as .aider.conf.yml
+#   Option B: Copy system-prompt.md from adapters/raw/ and use:
+#             aider --read system-prompt.md
+#
+# Usage:
+#   aider --read adapters/raw/system-prompt.md
+#   Then ask: "review src/auth/login.py"
+#
+# Or set the system prompt directly:
+read: []  # Add your context files here
+# Example: aider --message "review the auth module" --read adapters/raw/system-prompt.md

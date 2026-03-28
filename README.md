@@ -1,6 +1,18 @@
-# /review - Multi-Persona Code Review Skill for Claude Code
+# STEFAN Code Review Engine
 
-A Claude Code skill that reviews your code through the eyes of **four senior engineering specialists** — each bringing their own expertise, professional paranoia, and years of battle scars to your pull requests.
+```
+ ███████╗████████╗███████╗███████╗ █████╗ ███╗   ██╗
+ ██╔════╝╚══██╔══╝██╔════╝██╔════╝██╔══██╗████╗  ██║
+ ███████╗   ██║   █████╗  █████╗  ███████║██╔██╗ ██║
+ ╚════██║   ██║   ██╔══╝  ██╔══╝  ██╔══██║██║╚██╗██║
+ ███████║   ██║   ███████╗██║     ██║  ██║██║ ╚████║
+ ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝
+                    Code Review Engine
+```
+
+A multi-persona code review engine that works with **any AI coding tool** — Claude Code, Codex, Cursor, Copilot, Windsurf, Aider, or your own custom agent.
+
+Four senior engineering specialists review your code through their own lens of expertise, professional paranoia, and years of battle scars.
 
 Stop shipping code that "works but..." — get the review you'd get from a team of senior engineers who actually care.
 
@@ -72,71 +84,126 @@ Drop the skill into a full-stack repo and it figures out what's what. Backend co
 
 ---
 
-## Installation
+## Supported Tools
 
-### Option A: Per-Project (Recommended)
-
-Copy the skill into your project's `.claude/` directory:
-
-```bash
-# From your project root
-mkdir -p .claude/skills/review
-curl -o .claude/skills/review/SKILL.md \
-  https://raw.githubusercontent.com/sstefanov19/claude-code-review-skill/main/.claude/skills/review/SKILL.md
-```
-
-Commit it to your repo so the whole team gets it:
-
-```bash
-git add .claude/skills/review/SKILL.md
-git commit -m "Add /review skill for multi-persona code reviews"
-```
-
-### Option B: Global (All Projects)
-
-Install it in your home directory so it's available everywhere:
-
-```bash
-mkdir -p ~/.claude/skills/review
-curl -o ~/.claude/skills/review/SKILL.md \
-  https://raw.githubusercontent.com/sstefanov19/claude-code-review-skill/main/.claude/skills/review/SKILL.md
-```
-
-### Option C: Clone and Copy
-
-```bash
-git clone https://github.com/sstefanov19/claude-code-review-skill.git
-cp -r claude-code-review-skill/.claude/skills/review /path/to/your/project/.claude/skills/
-```
+| Tool | Config File | One-Line Install |
+|---|---|---|
+| **Claude Code** | `.claude/skills/review/SKILL.md` | Native `/review` slash command |
+| **OpenAI Codex CLI** | `AGENTS.md` | Drop-in agent instructions |
+| **Cursor** | `.cursorrules` | Project-level rules |
+| **GitHub Copilot** | `.github/copilot-instructions.md` | Copilot Chat instructions |
+| **Windsurf** | `.windsurfrules` | Cascade rules |
+| **Aider** | `--read system-prompt.md` | System prompt file |
+| **Any LLM API** | `system-prompt.md` | Raw prompt for any agent |
 
 ---
 
-## Usage
+## Installation
 
-Open Claude Code in your project and run:
+### Claude Code
 
-```
-/review
-```
+```bash
+# Per-project (recommended — your whole team gets it)
+mkdir -p .claude/skills/review
+curl -o .claude/skills/review/SKILL.md \
+  https://raw.githubusercontent.com/sstefanov19/claude-code-review-skill/master/.claude/skills/review/SKILL.md
 
-That's it. The skill will review all uncommitted changes.
-
-### Review Specific Files
-
-```
-/review src/main/java/com/example/UserService.java
-```
-
-### Review a Directory
-
-```
-/review src/main/java/com/example/auth/
+# Global (all your projects)
+mkdir -p ~/.claude/skills/review
+curl -o ~/.claude/skills/review/SKILL.md \
+  https://raw.githubusercontent.com/sstefanov19/claude-code-review-skill/master/.claude/skills/review/SKILL.md
 ```
 
-### Review a Pull Request
+**Usage:** `/review`, `/review src/auth/`, `/review 42` (PR number)
 
+### OpenAI Codex CLI
+
+```bash
+curl -o AGENTS.md \
+  https://raw.githubusercontent.com/sstefanov19/claude-code-review-skill/master/adapters/codex/AGENTS.md
 ```
-/review 42
+
+**Usage:** `codex "review src/auth/login.py"`
+
+### Cursor
+
+```bash
+curl -o .cursorrules \
+  https://raw.githubusercontent.com/sstefanov19/claude-code-review-skill/master/adapters/cursor/.cursorrules
+```
+
+**Usage:** In Cursor chat, ask *"review this file"* or *"review my changes"*
+
+### GitHub Copilot
+
+```bash
+mkdir -p .github
+curl -o .github/copilot-instructions.md \
+  https://raw.githubusercontent.com/sstefanov19/claude-code-review-skill/master/adapters/copilot/copilot-instructions.md
+```
+
+**Usage:** In Copilot Chat, ask *"review this file"* or *"review my changes"*
+
+### Windsurf
+
+```bash
+curl -o .windsurfrules \
+  https://raw.githubusercontent.com/sstefanov19/claude-code-review-skill/master/adapters/windsurf/.windsurfrules
+```
+
+**Usage:** In Cascade, ask *"review this file"* or *"review my changes"*
+
+### Aider
+
+```bash
+# Download the raw system prompt
+curl -o stefan-review-prompt.md \
+  https://raw.githubusercontent.com/sstefanov19/claude-code-review-skill/master/adapters/raw/system-prompt.md
+
+# Use it
+aider --read stefan-review-prompt.md
+```
+
+**Usage:** Ask *"review src/auth/login.py"*
+
+### Any LLM API / Custom Agent
+
+The `adapters/raw/system-prompt.md` file is a framework-agnostic prompt. Use it as:
+
+- **System prompt** in any OpenAI/Anthropic/Google API call
+- **Agent instructions** in LangChain, CrewAI, AutoGen, or any agent framework
+- **Custom tool** in your own pipeline
+
+```python
+# Example: OpenAI API
+with open("stefan-review-prompt.md") as f:
+    system_prompt = f.read()
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": f"Review this code:\n\n{code}"}
+    ]
+)
+```
+
+```python
+# Example: Anthropic API
+response = client.messages.create(
+    model="claude-sonnet-4-20250514",
+    system=system_prompt,
+    messages=[
+        {"role": "user", "content": f"Review this code:\n\n{code}"}
+    ]
+)
+```
+
+### Clone the Whole Repo
+
+```bash
+git clone https://github.com/sstefanov19/claude-code-review-skill.git
+# Then copy whichever adapter you need into your project
 ```
 
 ---
@@ -195,9 +262,28 @@ The skill file is just Markdown. Fork it and make it yours:
 
 ---
 
+## Project Structure
+
+```
+claude-code-review-skill/
+├── .claude/skills/review/
+│   └── SKILL.md                          # Claude Code native skill
+├── adapters/
+│   ├── codex/AGENTS.md                   # OpenAI Codex CLI
+│   ├── cursor/.cursorrules               # Cursor
+│   ├── copilot/copilot-instructions.md   # GitHub Copilot
+│   ├── windsurf/.windsurfrules           # Windsurf / Codeium
+│   ├── aider/.aider.conf.yml             # Aider
+│   └── raw/system-prompt.md              # Universal — any LLM or framework
+├── LICENSE
+└── README.md
+```
+
+---
+
 ## Requirements
 
-- [Claude Code](https://claude.ai/code) (CLI, desktop app, or IDE extension)
+- Any AI coding tool that accepts custom instructions or system prompts
 - That's it. No dependencies, no build step, no API keys.
 
 ---
@@ -207,9 +293,16 @@ The skill file is just Markdown. Fork it and make it yours:
 Contributions welcome. If you've got a check that would have caught a bug in production, open a PR.
 
 1. Fork this repo
-2. Edit `.claude/skills/review/SKILL.md`
-3. Test it on real code: run `/review` in Claude Code against a project
-4. Open a PR describing what the change catches and why it matters
+2. Edit the core skill in `.claude/skills/review/SKILL.md`
+3. Update the relevant adapters in `adapters/` to match
+4. Test it on real code against a project
+5. Open a PR describing what the change catches and why it matters
+
+**Ideas for contributions:**
+- New personas (DBA, DevOps Engineer, Performance Engineer)
+- Framework-specific checks (React hooks, Django ORM, Rails conventions)
+- Adapters for other tools (Zed, Neovim plugins, JetBrains AI Assistant)
+- Language-specific security checks (Go, Rust, Python, Ruby)
 
 ---
 
