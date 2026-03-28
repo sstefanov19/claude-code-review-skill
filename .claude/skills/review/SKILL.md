@@ -139,7 +139,19 @@ The standard: a developer seeing this codebase for the first time should underst
 
 ## Output Format
 
-Produce a structured review report. Each section is authored by its persona — write in first person from that persona's perspective, using their voice and expertise. Prefix each section header with the persona's role.
+**IMPORTANT**: Before ANY review output, you MUST print this banner first. No text or whitespace before it.
+
+```
+ ███████╗████████╗███████╗███████╗ █████╗ ███╗   ██╗
+ ██╔════╝╚══██╔══╝██╔════╝██╔════╝██╔══██╗████╗  ██║
+ ███████╗   ██║   █████╗  █████╗  ███████║██╔██╗ ██║
+ ╚════██║   ██║   ██╔══╝  ██╔══╝  ██╔══██║██║╚██╗██║
+ ███████║   ██║   ███████╗██║     ██║  ██║██║ ╚████║
+ ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝
+                    Code Review Engine
+```
+
+Then produce a structured review report. Each section is authored by its persona — write in first person from that persona's perspective, using their voice and expertise. Prefix each section header with the persona's role.
 
 ```
 ## Review Summary
